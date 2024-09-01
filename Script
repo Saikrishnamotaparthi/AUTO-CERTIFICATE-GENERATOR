@@ -1,0 +1,79 @@
+function createCertificates() {
+  Logger.log('Starting the createCertificates function');
+
+  // Get the active spreadsheet and the first sheet
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheets()[0];
+
+  // ID of the Google Slides template used for certificates
+  const slideTemplateId = '1Ng2EvEiAjL_mJ5Y1CqEhVa_UnS1E3tyVhq5HgTq5aZE';
+
+  // Get all the rows of data from the sheet
+  const rows = sheet.getDataRange().getValues();
+
+  // Get the first draft email (used as a template for sending emails)
+  const draft = GmailApp.getDrafts()[0]; // Assume the first draft email is the template
+  const draftMessage = draft.getMessage();
+
+  // Loop through each row in the sheet, starting from the second row (index 1)
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i]; // Each row represents a participant or recipient
+
+    Logger.log('Processing row %s: %s', i, row.join(', '));
+
+    // Make a copy of the Google Slides template for customization
+    const slideTemplate = DriveApp.getFileById(slideTemplateId);
+    const slideCopy = slideTemplate.makeCopy(); // Copy of the certificate template
+    const slideCopyId = slideCopy.getId(); // Get the ID of the copied slide
+
+    // Open the copied slide in Google Slides
+    const slide = SlidesApp.openById(slideCopyId);
+
+    // Access all the slides in the presentation
+    const slides = slide.getSlides();
+    for (let j = 0; j < slides.length; j++) {
+      const shapes = slides[j].getShapes(); // Get all shapes (text boxes) on each slide
+      for (let k = 0; k < shapes.length; k++) {
+        const textRange = shapes[k].getText(); // Get the text content within each shape
+        if (textRange) {
+          const text = textRange.asString(); // Convert text range to a string
+          const newText = text.replace('<<Name>>', row[0]); // Replace placeholder with participant's name
+          textRange.setText(newText); // Set the updated text
+        }
+      }
+    }
+
+    Logger.log('Slide for row %s has been updated', i);
+
+    // Save and close the customized slide
+    slide.saveAndClose();
+
+    // Convert the updated slide to a PDF file
+    const pdf = DriveApp.getFileById(slideCopyId).getAs('application/pdf');
+
+    // Customize the draft email's subject and body by replacing the placeholder with the participant's name
+    const subject = draftMessage.getSubject();
+    const body = draftMessage.getBody().replace('<<Name>>', row[0]);
+
+    // Handle potential encoding issues with the name in the email body
+    const encodedName = encodeURIComponent(row[0]);
+    const htmlBody = draftMessage.getBody().replace('<<Name>>', encodedName);
+
+    // Send the email with the customized PDF certificate as an attachment
+    MailApp.sendEmail({
+      to: row[3], // Recipient's email address from the spreadsheet
+      subject: subject, // Email subject
+      htmlBody: htmlBody, // Email body content
+      attachments: [pdf], // Attach the certificate PDF
+    });
+
+    Logger.log('Email for row %s has been sent', i);
+
+    // Move the temporary slide copy to the trash after the email has been sent
+    DriveApp.getFileById(slideCopyId).setTrashed(true);
+
+    Logger.log('Temporary Slide copy for row %s has been deleted', i);
+  }
+
+  Logger.log('Finished executing the createCertificates function');
+}
