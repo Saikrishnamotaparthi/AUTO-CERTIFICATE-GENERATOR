@@ -1,3 +1,14 @@
+*/
+/**
+ * Function to create and send appreciation certificates
+ * Loads data from a Google Spreadsheet, fills a Slide template,
+ * exports it as a PDF, and emails the certificate to the recipient.
+ * It will Send takes email body&Subject from the First Drafts mail
+ * row[0] = Full Name //You can change the row based on your sheet
+ * row[1] = Recipient Email //You can change the row based on your sheet
+ */
+
+
 function createCertificates() {
   Logger.log('Starting the createCertificates function');
 
@@ -5,8 +16,12 @@ function createCertificates() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheets()[0];
 
+  const slideTemplateId = '<<PLACE YOUR TEMPLATE ID HERE>>';
   // ID of the Google Slides template used for certificates
-  const slideTemplateId = '1Ng2EvEiAjL_mJ5Y1CqEhVa_UnS1E3tyVhq5HgTq5aZE';
+  // To find the Google Sheet template ID:
+  // 1. Open the Google Sheet and check the URL.
+  // 2. The template ID is the part of the URL after `/d/` and before `/edit`.
+  // Example: In the URL "https://docs.google.com/spreadsheets/d/1abcXYZ12345/edit", the template ID is "1abcXYZ12345".
 
   // Get all the rows of data from the sheet
   const rows = sheet.getDataRange().getValues();
