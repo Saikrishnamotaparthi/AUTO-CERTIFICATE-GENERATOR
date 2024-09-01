@@ -26,7 +26,7 @@ Before running this script, make sure the following prerequisites are met:
 
 3. **Gmail Draft Email**:
    - Create a draft email in Gmail that will be used as the template for the emails sent.
-   - The draft email body should include `<<Name>>` as a placeholder for personalization.
+   - The Email draft should be on the Top of draft's Mail's List
 
 ## Setup
 
@@ -55,7 +55,7 @@ Before running this script, make sure the following prerequisites are met:
 ## Customization
 
 - **Additional Placeholders**: You can modify the script to handle additional placeholders in the Google Slides template or email body by adding more `replace()` functions.
-- **Row Structure**: If your spreadsheet has a different structure, adjust the column indices (`row[0]` for name, `row[3]` for email) to match your data layout.
+- **Row Structure**: If your spreadsheet has a different structure, adjust the column indices (`row[0]` for name, `row[1]` for email) to match your data layout.
 
 ## Running the Script
 
