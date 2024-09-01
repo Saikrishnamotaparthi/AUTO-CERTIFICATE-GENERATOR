@@ -57,11 +57,32 @@ Before running this script, make sure the following prerequisites are met:
 - **Additional Placeholders**: You can modify the script to handle additional placeholders in the Google Slides template or email body by adding more `replace()` functions.
 - **Row Structure**: If your spreadsheet has a different structure, adjust the column indices (`row[0]` for name, `row[1]` for email) to match your data layout.
 
-## Running the Script
+## Execution Process
 
-1. Open the Google Apps Script editor from your Google Spreadsheet.
-2. Click on the function dropdown menu and select `createCertificates`.
-3. Click the run button (▶) to execute the script.
+### 1. Open Google Sheets
+Go to Google Sheets and open the spreadsheet you want to work with.
+
+### 2. Access the Script Editor
+- Click on "Extensions" in the menu at the top.
+- Select "Apps Script" from the dropdown menu.
+
+### 3. Script Editor Window
+A new tab or window will open with the Google Apps Script editor.
+
+### 4. Write Your Script
+You’ll see a default function called `myFunction()`. Edit the Script with the provided `APP_SCRIP_code`.
+
+### 5. Save Your Script
+- Click on the "File" menu in the script editor and select "Save".
+- Give your project a name and click "OK".
+
+### 6. Run Your Script
+- To run a script function, click on the dropdown menu near the top left of the script editor (it usually shows `createCertificates`).
+- Select the function `createCertificates()` to run.
+- Click the "Run" button (a triangle icon) to execute the selected function.
+
+### 7. Authorize Your Script
+The first time you run the script, you might need to authorize it. Follow the on-screen prompts to grant the necessary permissions.
 
 ## License
 
