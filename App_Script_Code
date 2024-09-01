@@ -3,7 +3,7 @@
  * Function to create and send appreciation certificates
  * Loads data from a Google Spreadsheet, fills a Slide template,
  * exports it as a PDF, and emails the certificate to the recipient.
- * It will Send takes email body&Subject from the First Drafts mail
+ * It will takes email body&Subject from the First Drafts mail
  * row[0] = Full Name //You can change the row based on your sheet
  * row[1] = Recipient Email //You can change the row based on your sheet
  */
