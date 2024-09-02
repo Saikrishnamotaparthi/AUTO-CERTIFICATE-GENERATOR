@@ -8,33 +8,35 @@
  * row[1] = Recipient Email //You can change the row based on your sheet
  */
 
-
-function createCertificates() {
+function createCertificates(e) {
   Logger.log('Starting the createCertificates function');
 
   // Get the active spreadsheet and the first sheet
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheets()[0];
+  const sheet = e.source.getActiveSheet();
+  const editedRange = e.range;
+  const editedRow = editedRange.getRow();
+  const editedColumn = editedRange.getColumn();
 
-  const slideTemplateId = '<<PLACE YOUR TEMPLATE ID HERE>>';
-  // ID of the Google Slides template used for certificates
-  // To find the Google Sheet template ID:
-  // 1. Open the Google Sheet and check the URL.
-  // 2. The template ID is the part of the URL after `/d/` and before `/edit`.
-  // Example: In the URL "https://docs.google.com/spreadsheets/d/1abcXYZ12345/edit", the template ID is "1abcXYZ12345".
+  // Define the column number where new details (email/name) are entered
+  const targetColumn = 1; // Adjust this to the specific column where you expect new entries
 
-  // Get all the rows of data from the sheet
-  const rows = sheet.getDataRange().getValues();
+  // Check if the edit is within the correct column
+  if (editedColumn === targetColumn) {
+    const slideTemplateId = '<<PLACE YOUR TEMPLATE ID HERE>>';
+     // ID of the Google Slides template used for certificates
+     // To find the Google Sheet template ID:
+    // 1. Open the Google Sheet and check the URL.
+    // 2. The template ID is the part of the URL after `/d/` and before `/edit`.
+    // Example: In the URL "https://docs.google.com/spreadsheets/d/1abcXYZ12345/edit", the template ID is "1abcXYZ12345".
 
-  // Get the first draft email (used as a template for sending emails)
-  const draft = GmailApp.getDrafts()[0]; // Assume the first draft email is the template
-  const draftMessage = draft.getMessage();
+    
+    const row = sheet.getRange(editedRow, 1, 1, sheet.getLastColumn()).getValues()[0]; // Get the edited row
 
-  // Loop through each row in the sheet, starting from the second row (index 1)
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i]; // Each row represents a participant or recipient
+    Logger.log('Processing row %s: %s', editedRow, row.join(', '));
 
-    Logger.log('Processing row %s: %s', i, row.join(', '));
+    // Get the first draft email (used as a template for sending emails)
+    const draft = GmailApp.getDrafts()[0]; // Assume the first draft email is the template
+    const draftMessage = draft.getMessage();
 
     // Make a copy of the Google Slides template for customization
     const slideTemplate = DriveApp.getFileById(slideTemplateId);
@@ -58,7 +60,7 @@ function createCertificates() {
       }
     }
 
-    Logger.log('Slide for row %s has been updated', i);
+    Logger.log('Slide for row %s has been updated', editedRow);
 
     // Save and close the customized slide
     slide.saveAndClose();
@@ -76,18 +78,18 @@ function createCertificates() {
 
     // Send the email with the customized PDF certificate as an attachment
     MailApp.sendEmail({
-      to: row[3], // Recipient's email address from the spreadsheet
+      to: row[1], // Recipient's email address from the spreadsheet
       subject: subject, // Email subject
       htmlBody: htmlBody, // Email body content
       attachments: [pdf], // Attach the certificate PDF
     });
 
-    Logger.log('Email for row %s has been sent', i);
+    Logger.log('Email for row %s has been sent', editedRow);
 
     // Move the temporary slide copy to the trash after the email has been sent
     DriveApp.getFileById(slideCopyId).setTrashed(true);
 
-    Logger.log('Temporary Slide copy for row %s has been deleted', i);
+    Logger.log('Temporary Slide copy for row %s has been deleted', editedRow);
   }
 
   Logger.log('Finished executing the createCertificates function');
